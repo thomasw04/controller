@@ -1,0 +1,6 @@
+.git
+.agents
+.codex
+result*
+dist-newstyle
+config.toml

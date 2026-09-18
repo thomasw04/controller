@@ -1,0 +1,11 @@
+services:
+  controller:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    secrets:
+      - config.toml
+
+secrets:
+  config.toml:
+    file: ./config.toml

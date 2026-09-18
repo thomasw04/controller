@@ -1,0 +1,29 @@
+cabal-version: 3.0
+name: controller
+version: 0.1.0.0
+synopsis: IoT Device Controller
+build-type: Simple
+
+executable controller
+  main-is: Main.hs
+  hs-source-dirs: app
+  other-modules:
+    Config
+    PowerPlug
+    PowerPlug.Types
+    PowerPlug.ShellyPlugGen3
+    Types
+  build-depends:
+    base >= 4.14 && < 5,
+    aeson >= 2.0 && < 2.3,
+    bytestring >= 0.10 && < 0.13,
+    containers >= 0.6 && < 0.9,
+    http-client >= 0.7 && < 0.8,
+    http-types >= 0.12 && < 0.13,
+    iproute >= 1.7 && < 1.8,
+    memory >= 0.16 && < 0.19,
+    text >= 1.2 && < 2.2,
+    tomland >= 1.3.2 && < 1.4,
+    yesod-core >= 1.6 && < 1.8
+  default-language: Haskell2010
+  ghc-options: -Wall -threaded -rtsopts

@@ -1,0 +1,7 @@
+token = "this-must-be-replaced-and-is-only-for-testing"
+
+[[devices]]
+name = "my-shelly-plug"
+kind = "power-plug"
+type = "shelly-plug-gen3"
+ip = "127.0.0.1"

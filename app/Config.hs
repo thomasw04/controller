@@ -9,11 +9,13 @@ module Config
 
 import Control.Exception (IOException, try)
 import Control.Monad (unless)
+import Data.Aeson (ToJSON (toJSON), object)
 import Data.Char (isAsciiLower, isAsciiUpper, isDigit)
 import Data.IP (IP)
 import Data.Map.Strict (Map)
 import Data.Text (Text)
 import Toml (TomlCodec, (.=))
+import qualified Data.Aeson as Aeson
 import qualified Data.ByteString as BS
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
@@ -30,6 +32,22 @@ data Device = Device
     , deviceKind :: Kind
     , deviceIp :: IP
     }
+
+instance ToJSON Kind where
+    toJSON kind =
+        let (name, typ) = case kind of
+                PowerPlug t -> ("power-plug", toJSON t)
+        in object
+            [ "kind" Aeson..= (name :: Text)
+            , "type" Aeson..= typ
+            ]
+
+instance ToJSON Device where
+    toJSON device = object
+        [ "name" Aeson..= deviceName device
+        , "kind" Aeson..= deviceKind device
+        , "ip" Aeson..= show (deviceIp device)
+        ]
 
 data Config = Config
     { configToken :: Text

@@ -33,6 +33,7 @@ data App = App
 mkYesod "App" [parseRoutes|
 /health HealthR GET
 /reload ReloadR POST
+/list ListR GET
 /power-plug PowerPlugR PowerPlug.Site getPowerPlugSite
 |]
 
@@ -92,6 +93,11 @@ postReloadR = do
       | status == Status.status401 -> unauthorized
       | otherwise -> sendResponseStatus status $ object ["error" .= message]
     Right () -> pure $ object ["status" .= String "reloaded"]
+
+getListR :: Handler Value
+getListR = do
+  configuration <- authenticatedConfig
+  pure $ object ["devices" .= Config.configDevices configuration]
 
 getPowerPlugSite :: App -> PowerPlug.Site
 getPowerPlugSite _ = PowerPlug.Site

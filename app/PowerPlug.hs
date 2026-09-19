@@ -32,6 +32,12 @@ import qualified Toml
 
 data Type = ShellyPlugGen3
 
+instance ToJSON Type where
+    toJSON = String . typeName
+
+typeName :: Type -> Text
+typeName ShellyPlugGen3 = "shelly-plug-gen3"
+
 data Site = Site
 
 class Yesod master => HasPowerPlugs master where
@@ -74,8 +80,7 @@ driver :: Type -> Manager -> IP -> PowerPlug
 driver ShellyPlugGen3 = PowerPlug.ShellyPlugGen3.powerPlug
 
 codec :: TomlCodec Type
-codec = Toml.textBy render parse "type"
+codec = Toml.textBy typeName parse "type"
     where
-        render ShellyPlugGen3 = "shelly-plug-gen3"
         parse "shelly-plug-gen3" = Right ShellyPlugGen3
         parse _ = Left "Unsupported power-plug type"

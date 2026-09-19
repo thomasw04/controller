@@ -22,7 +22,9 @@ import qualified Data.Text as Text
 import qualified Data.Text.Encoding as Text
 import qualified Network.HTTP.Client as HTTP
 import qualified Network.HTTP.Types.Status as Status
+import qualified Network.Wai.Handler.Warp as Warp
 import qualified PowerPlug
+import qualified System.Posix.Signals as Signals
 
 data App = App
   { appConfig :: MVar Config.Config
@@ -119,4 +121,11 @@ main = do
   configuration <- either (die . Text.unpack) pure loaded
   state <- newMVar configuration
   manager <- HTTP.newManager $ HTTP.managerSetProxy HTTP.noProxy HTTP.defaultManagerSettings
-  warp 8080 $ App state file manager
+  application <- toWaiApp $ App state file manager
+  let installShutdown closeSocket =
+        Monad.void $ Signals.installHandler Signals.sigTERM (Signals.Catch closeSocket) Nothing
+      settings = Warp.setPort 8080
+        $ Warp.setGracefulShutdownTimeout (Just 8)
+        $ Warp.setInstallShutdownHandler installShutdown
+        $ Warp.defaultSettings
+  Warp.runSettings settings application
